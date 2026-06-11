@@ -1,0 +1,207 @@
+general:
+  park_capacity: 5000
+
+rides:
+  - ride: a1
+    min_height: 120
+    seats: 20
+    queue_max: 200
+    cycle_mean: 180
+    n_trains: 1
+
+  - ride: a2
+    min_height: 0
+    seats: 30
+    queue_max: 250
+    cycle_mean: 240
+    n_trains: 1
+
+  - ride: a3
+    min_height: 140
+    seats: 16
+    queue_max: 150
+    cycle_mean: 150
+    n_trains: 1
+
+  - ride: a4
+    min_height: 80
+    seats: 24
+    queue_max: 180
+    cycle_mean: 210
+    n_trains: 1
+
+  - ride: a5
+    min_height: 100
+    seats: 40
+    queue_max: 160
+    cycle_mean: 170
+    n_trains: 1
+
+group_types:
+  - name: family
+    prob: 0.50
+    size_lambda: 5.2
+    minheight_range: [80, 150]
+    max_wait_range: [300, 1200]
+    balk_q_values: [30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160]
+    max_rides_range: [4, 10]
+    max_park_time_range: [10800, 21600]
+    base_pref: [0.10, 0.35, 0.05, 0.35, 0.15]
+
+  - name: teen
+    prob: 0.25
+    size_lambda: 3.5
+    minheight_range: [140, 190]
+    max_wait_range: [600, 1800]
+    balk_q_values: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220]
+    max_rides_range: [6, 12]
+    max_park_time_range: [7200, 18000]
+    base_pref: [0.25, 0.10, 0.30, 0.10, 0.25]
+
+  - name: adult
+    prob: 0.25
+    size_lambda: 2.0
+    minheight_range: [120, 190]
+    max_wait_range: [480, 1500]
+    balk_q_values: [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+    max_rides_range: [3, 9]
+    max_park_time_range: [7200, 18000]
+    base_pref: [0.20, 0.20, 0.20, 0.20, 0.20]
+
+# Global arrivals kept only as a fallback for backward compatibility with the current R code.
+# To implement the tutor's idea properly, each scenario below also includes its own arrivals block.
+arrivals:
+  - until_time: 7200
+    mean_iat: 60
+  - until_time: 14400
+    mean_iat: 80
+  - until_time: 999999
+    mean_iat: 70
+
+scenarios:
+  # 1) Simple scenario: low load, no breakdowns, queues should stay controlled.
+  - name: base_low_load
+    policy: base
+    alpha: 0.00
+    seed0: 10000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 90
+      - until_time: 14400
+        mean_iat: 120
+      - until_time: 999999
+        mean_iat: 100
+    breakdown: null
+
+  - name: informed_low_load
+    policy: informed
+    alpha: 0.02
+    seed0: 20000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 90
+      - until_time: 14400
+        mean_iat: 120
+      - until_time: 999999
+        mean_iat: 100
+    breakdown: null
+
+  # 2) Higher-load scenario: same park, higher arrival rate, some queues should fill.
+  - name: base_high_load
+    policy: base
+    alpha: 0.00
+    seed0: 30000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 18
+      - until_time: 14400
+        mean_iat: 28
+      - until_time: 999999
+        mean_iat: 22
+    breakdown: null
+
+  - name: informed_high_load
+    policy: informed
+    alpha: 0.02
+    seed0: 40000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 18
+      - until_time: 14400
+        mean_iat: 28
+      - until_time: 999999
+        mean_iat: 22
+    breakdown: null
+
+  # 3) Same high-load setting, but with a breakdown.
+  - name: informed_high_load_break_a3_close
+    policy: informed
+    alpha: 0.02
+    seed0: 50000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 18
+      - until_time: 14400
+        mean_iat: 28
+      - until_time: 999999
+        mean_iat: 22
+    breakdown:
+      ride: a3
+      start: 3600
+      duration: 1200
+      mode: close
+
+  # 4) Same high-load setting, but with a partial failure instead of a full closure.
+  - name: informed_high_load_break_a3_reduce_50
+    policy: informed
+    alpha: 0.02
+    seed0: 60000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 18
+      - until_time: 14400
+        mean_iat: 28
+      - until_time: 999999
+        mean_iat: 22
+    breakdown:
+      ride: a3
+      start: 3600
+      duration: 1200
+      mode: reduce
+      factor: 0.5
+
+  # 5) Optional extra scenario: very high load to show clearly where the analytical model breaks down.
+  - name: informed_very_high_load
+    policy: informed
+    alpha: 0.02
+    seed0: 70000
+    until: 7200
+    R: 10
+    p_repeat: 0.35
+    arrivals:
+      - until_time: 7200
+        mean_iat: 12
+      - until_time: 14400
+        mean_iat: 18
+      - until_time: 999999
+        mean_iat: 15
+    breakdown: null
+    
