@@ -639,7 +639,7 @@ run_replications <- function(
   do.call(rbind, rows)
 }
 
-run_replications_full <- function( #to do good graphs we need kpis agg_time and tab_by_ride per attraction and kpis
+run_replications_full <- function(
     cfg,
     scenario_name,
     override_n_trains = NULL,
