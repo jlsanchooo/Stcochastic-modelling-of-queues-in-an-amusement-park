@@ -1,12 +1,4 @@
-# ---------------------------------------------------------
-# 0) Load simulator and functions from final1.R
-# ---------------------------------------------------------
-
-source("final1.R")
-
-# ---------------------------------------------------------
-# Common plot style
-# ---------------------------------------------------------
+source("simulation_park.R")
 
 # Muted palette: less saturated and more neutral.
 # Avoids strong pink, purple, turquoise and bright blue.
