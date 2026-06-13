@@ -7,11 +7,11 @@ library(ggplot2)
 # Read YAML
 # =========================================================
 
-if (!file.exists("escenarios_iñaki.yaml")) {
+if (!file.exists("escenarios.yaml")) {
   stop("No encuentro el archivo 'escenarios_iñaki.yaml' en esta carpeta: ", getwd())
 }
 
-cfg <- yaml::read_yaml("escenarios_iñaki.yaml")
+cfg <- yaml::read_yaml("escenarios.yaml")
 
 # =========================================================
 # YAML helpers
