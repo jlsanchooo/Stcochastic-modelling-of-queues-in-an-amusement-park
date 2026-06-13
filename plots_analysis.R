@@ -1,7 +1,6 @@
 source("simulation_park.R")
 
-# Muted palette: less saturated and more neutral.
-# Avoids strong pink, purple, turquoise and bright blue.
+# Colors
 soft_palette <- c(
   "#6B705C",  # olive grey
   "#A5A58D",  # muted sage
